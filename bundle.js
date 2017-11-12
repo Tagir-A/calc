@@ -1,45 +1,58 @@
+// class Calculator {
+//     constructor(node) {
+//         let prevValue = '0'
+//         let activeValue = '0'
+//         this.setActiveValue = (value = '') => {
+//             switch (value) {
+//                 default:
+
+//             }
+//                     activeValue.startsWith('0') && activeValue.length == 1
+//              && value != '.' ?
+//             activeValue = value :
+//             activeValue += value
+//         }
+//         this.getActiveValue = () => activeValue
+//         let action = null
+//         this.setAction = (value) => { action = value }
+//         this.render = () => {
+//             node.innerHTML = activeValue
+//         }
+//     }
+// }
+
+function render(value, node) {
+    node.innerHtml = value
+}
+
 document.addEventListener('DOMContentLoaded', function (event) {
     const calc = document.querySelector('.calc')
     const screen = document.querySelector('.screen')
-    let input = 0
-    let prevInput = 0
-    let action = null
+    // let input = 0
+    // let prevInput = 0
+    // let action = null
 
-    class Calculator {
-        constructor(node) {
-            let prevValue = '0'
-            let activeValue = '0'
-            this.setActiveValue = (value) => {
-                activeValue.startsWith('0') && activeValue.length == 1 && value != '.' ?
-                activeValue = value :
-                activeValue += value
-            }
-            this.getActiveValue = () => activeValue
-            let action = null
-            this.setAction = (value) => { action = value }
-            this.render = () => {
-                node.innerHTML = activeValue
-            }
-        }
-    }
 
-    const c = new Calculator(screen)
+    // const c = new Calculator(screen)
     calc.addEventListener('click', ({target}) => {
         if (target.hasAttribute('data-value')) {
             const value = target.getAttribute('data-value')
-            value.match(/\d/) || value.match(/\./) ? c.setActiveValue(value) :
+            value.match(/\d/) || value.match(/\./) ? null :
             value.includes('AC') ? null :
             value.includes('+/-') ? null :
             value.includes('%') ? null :
             value.includes('=') ? null :
             value.includes('+') ||
-            value.includes('-') ? c.setAction(value) :
+            value.includes('-') ? null:
             console.log('end of click event')
+            render(value, screen)
+            console.log()
         }
-        console.log(c.getActiveValue())
-        c.render()
+
     })
+
 })
+
 
 //     function substract(a,b) {
 //         console.log(a)
