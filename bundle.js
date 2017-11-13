@@ -25,7 +25,7 @@ function render(value, node) {
     node.innerHtml = value
 }
 
-document.addEventListener('DOMContentLoaded', function (event) {
+document.addEventListener('DOMContentLoaded', function () {
     const calc = document.querySelector('.calc')
     const screen = document.querySelector('.screen')
     // let input = 0
