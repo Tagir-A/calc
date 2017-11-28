@@ -120,14 +120,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-    const screenNode = document.querySelector('.screen')
-    const calcNode = document.querySelector('.calc')
-    const calcStore = {
+    const initialStore = {
         firstValue: '0',
         secondValue: '0',
         action: null
     }
+    const screenNode = document.querySelector('.screen')
+    const calcNode = document.querySelector('.calc')
+    let calcStore = {...initialStore}
     function renderStore() {
         screenNode.innerHTML = calcStore.firstValue
     }
@@ -145,13 +145,17 @@ document.addEventListener('DOMContentLoaded', function () {
             activeValue.includes('.') ? activeValue : activeValue + '.'
         renderStore()
     }
+    function resetStore() {
+        calcStore = {...initialStore}
+        renderStore()
+    }
     calcNode.addEventListener('click', ({target}) => {
         if(target.hasAttribute('data-value')) {
             const clickValue = target.getAttribute('data-value') || ''
             const activeValueKey = calcStore.action === null ? 'firstValue' : 'secondValue'
             clickValue.match(/\d/) ? changeValue(activeValueKey, clickValue) :
             clickValue.match(/\./) ? addDot(activeValueKey) :
-            // clickValue.includes('AC') ? resetScreenValue() :
+            clickValue.includes('AC') ? resetStore() :
             // clickValue.includes('+/-') ? changeSign() :
             // clickValue.includes('%') ? makePercent() :
             // clickValue.includes('=') ? executeAction() :
