@@ -131,8 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderStore() {
         screenNode.innerHTML = calcStore.firstValue
     }
-    function changeValue(value = '') {
-        const activeValueKey = calcStore.action === null ? 'firstValue' : 'secondValue'
+    function changeValue(activeValueKey = 'firstValue', value = '') {
         const activeValue = calcStore[activeValueKey]
         calcStore[activeValueKey] =
             activeValue === '0' && value === '0' ? '0' :
@@ -140,11 +139,18 @@ document.addEventListener('DOMContentLoaded', function () {
             activeValue + value
         renderStore()
     }
+    function addDot(activeValueKey = 'firstValue') {
+        const activeValue = calcStore[activeValueKey]
+        calcStore[activeValueKey] =
+            activeValue.includes('.') ? activeValue : activeValue + '.'
+        renderStore()
+    }
     calcNode.addEventListener('click', ({target}) => {
         if(target.hasAttribute('data-value')) {
             const clickValue = target.getAttribute('data-value') || ''
-            clickValue.match(/\d/) ? changeValue(clickValue) :
-            // clickValue.match(/\./)
+            const activeValueKey = calcStore.action === null ? 'firstValue' : 'secondValue'
+            clickValue.match(/\d/) ? changeValue(activeValueKey, clickValue) :
+            clickValue.match(/\./) ? addDot(activeValueKey) :
             // clickValue.includes('AC') ? resetScreenValue() :
             // clickValue.includes('+/-') ? changeSign() :
             // clickValue.includes('%') ? makePercent() :
