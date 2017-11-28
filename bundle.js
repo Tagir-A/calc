@@ -21,37 +21,37 @@
 //     }
 // }
 
-function render(value, node) {
-    node.innerHtml = value
-}
+// function render(value, node) {
+//     node.innerHtml = value
+// }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const calc = document.querySelector('.calc')
-    const screen = document.querySelector('.screen')
-    // let input = 0
-    // let prevInput = 0
-    // let action = null
+// document.addEventListener('DOMContentLoaded', function () {
+//     const calc = document.querySelector('.calc')
+//     const screen = document.querySelector('.screen')
+//     // let input = 0
+//     // let prevInput = 0
+//     // let action = null
 
 
-    // const c = new Calculator(screen)
-    calc.addEventListener('click', ({target}) => {
-        if (target.hasAttribute('data-value')) {
-            const value = target.getAttribute('data-value')
-            value.match(/\d/) || value.match(/\./) ? null :
-            value.includes('AC') ? null :
-            value.includes('+/-') ? null :
-            value.includes('%') ? null :
-            value.includes('=') ? null :
-            value.includes('+') ||
-            value.includes('-') ? null:
-            console.log('end of click event')
-            render(value, screen)
-            console.log()
-        }
+//     // const c = new Calculator(screen)
+//     calc.addEventListener('click', ({target}) => {
+//         if (target.hasAttribute('data-value')) {
+//             const value = target.getAttribute('data-value')
+//             value.match(/\d/) || value.match(/\./) ? null :
+//             value.includes('AC') ? null :
+//             value.includes('+/-') ? null :
+//             value.includes('%') ? null :
+//             value.includes('=') ? null :
+//             value.includes('+') ||
+//             value.includes('-') ? null:
+//             console.log('end of click event')
+//             render(value, screen)
+//             console.log()
+//         }
 
-    })
+//     })
 
-})
+// })
 
 
 //     function substract(a,b) {
@@ -112,3 +112,61 @@ document.addEventListener('DOMContentLoaded', function () {
 //         console.log('end')
 //     })
 // });
+
+document.addEventListener('DOMContentLoaded', function () {
+
+
+
+
+
+
+
+    const screenNode = document.querySelector('.screen')
+    const calcNode = document.querySelector('.calc')
+    const calcStore = {
+        firstValue: '0',
+        secondValue: '0',
+        action: null
+    }
+    function renderStore() {
+        screenNode.innerHTML = calcStore.firstValue
+    }
+    function changeValue(value = '') {
+        const activeValueKey = calcStore.action === null ? 'firstValue' : 'secondValue'
+        const activeValue = calcStore[activeValueKey]
+        calcStore[activeValueKey] =
+            activeValue === '0' && value === '0' ? '0' :
+            activeValue === '0' && value !== '0' ? value :
+            activeValue + value
+        renderStore()
+    }
+    calcNode.addEventListener('click', ({target}) => {
+        if(target.hasAttribute('data-value')) {
+            const clickValue = target.getAttribute('data-value') || ''
+            clickValue.match(/\d/) ? changeValue(clickValue) :
+            // clickValue.match(/\./)
+            // clickValue.includes('AC') ? resetScreenValue() :
+            // clickValue.includes('+/-') ? changeSign() :
+            // clickValue.includes('%') ? makePercent() :
+            // clickValue.includes('=') ? executeAction() :
+            // clickValue.includes('+') ||
+            // clickValue.includes('-') ? addAction(clickValue) :
+            console.log('false')
+        }
+
+    })
+
+    renderStore()
+
+
+
+
+
+
+
+
+
+
+
+
+})
