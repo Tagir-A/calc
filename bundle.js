@@ -129,7 +129,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const calcNode = document.querySelector('.calc')
     let calcStore = {...initialStore}
     function renderStore() {
-        screenNode.innerHTML = calcStore.firstValue
+        const activeValueKey =  calcStore.action === null ? 'firstValue' : 'secondValue'
+        screenNode.innerHTML = calcStore[activeValueKey]
     }
     function changeValue(activeValueKey = 'firstValue', value = '') {
         const activeValue = calcStore[activeValueKey]
@@ -145,8 +146,42 @@ document.addEventListener('DOMContentLoaded', function () {
             activeValue.includes('.') ? activeValue : activeValue + '.'
         renderStore()
     }
-    function resetStore() {
-        calcStore = {...initialStore}
+    function resetStore(init = {}) {
+        calcStore = {
+            ...initialStore,
+            ...init
+        }
+        renderStore()
+    }
+    function changeSign(activeValueKey) {
+        calcStore[activeValueKey] = (calcStore[activeValueKey] * -1).toString()
+        renderStore()
+    }
+    function makePercent(activeValueKey) {
+        calcStore[activeValueKey] = (calcStore[activeValueKey] / 100).toString()
+        renderStore()
+    }
+    function executeAction() {
+        const {...oldStore} = calcStore
+        const {firstValue, secondValue, action} = oldStore
+        resetStore()
+        calcStore.firstValue = eval(firstValue + action + secondValue)
+        renderStore()
+    }
+    function actionPlus() {
+        calcStore.action = '+'
+        renderStore()
+    }
+    function actionMinus() {
+        calcStore.action = '+'
+        renderStore()
+    }
+    function addAction(action) {
+        calcStore.action =
+            action.includes('×') ? '*' :
+            action.includes('÷') ? '/' :
+            action
+
         renderStore()
     }
     calcNode.addEventListener('click', ({target}) => {
@@ -156,11 +191,11 @@ document.addEventListener('DOMContentLoaded', function () {
             clickValue.match(/\d/) ? changeValue(activeValueKey, clickValue) :
             clickValue.match(/\./) ? addDot(activeValueKey) :
             clickValue.includes('AC') ? resetStore() :
-            // clickValue.includes('+/-') ? changeSign() :
-            // clickValue.includes('%') ? makePercent() :
-            // clickValue.includes('=') ? executeAction() :
-            // clickValue.includes('+') ||
-            // clickValue.includes('-') ? addAction(clickValue) :
+            clickValue.includes('+/-') ? changeSign(activeValueKey) :
+            clickValue.includes('%') ? makePercent(activeValueKey) :
+            clickValue.includes('=') ? executeAction() :
+            clickValue.includes('+') || clickValue.includes('-')
+            clickValue.includes('×') || clickValue.includes('÷') ? addAction(clickValue) :
             console.log('false')
         }
 
