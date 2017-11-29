@@ -1,28 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     const initialStore = {
-        firstValue: '0',
-        secondValue: '0',
-        action: null
+        chain: ['0']
     }
     const screenNode = document.querySelector('.screen')
     const calcNode = document.querySelector('.calc')
     let calcStore = {...initialStore}
     function renderStore() {
-        const activeValueKey =  calcStore.action === null ? 'firstValue' : 'secondValue'
-        screenNode.innerHTML = calcStore[activeValueKey]
+        screenNode.innerHTML = calcStore.chain.slice(-1).shift()
     }
-    function changeValue(activeValueKey = 'firstValue', value = '') {
-        const activeValue = calcStore[activeValueKey]
-        calcStore[activeValueKey] =
-            activeValue === '0' && value === '0' ? '0' :
-            activeValue === '0' && value !== '0' ? value :
-            activeValue + value
+    function changeValue(value = '') {
+        const lastValue = calcStore.chain.slice(-1).shift()
+        calcStore.chain = [
+            ...calcStore.chain.slice(0,-1),
+            lastValue.startsWith('0') && lastValue.length === 1 ? value : lastValue + value
+        ]
         renderStore()
     }
-    function addDot(activeValueKey = 'firstValue') {
-        const activeValue = calcStore[activeValueKey]
-        calcStore[activeValueKey] =
-            activeValue.includes('.') ? activeValue : activeValue + '.'
+    function addDot() {
+        const lastValue = calcStore.chain.slice(-1).shift()
+        calcStore.chain = [...calcStore.chain.slice(0,-1), lastValue.includes('.') ? lastValue : lastValue + '.']
         renderStore()
     }
     function resetStore(init = {}) {
@@ -32,19 +28,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         renderStore()
     }
-    function changeSign(activeValueKey) {
-        calcStore[activeValueKey] = (calcStore[activeValueKey] * -1).toString()
+    function changeSign() {
+        const lastValue = calcStore.chain.slice(-1).shift()
+        calcStore.chain = [...calcStore.chain.slice(0,-1), ((+lastValue) * -1).toString()]
         renderStore()
     }
-    function makePercent(activeValueKey) {
-        calcStore[activeValueKey] = (calcStore[activeValueKey] / 100).toString()
+    function makePercent() {
+        const lastValue = calcStore.chain.slice(-1).shift()
+        calcStore.chain = [...calcStore.chain.slice(0,-1), ((+lastValue) / 100).toString()]
         renderStore()
     }
     function executeAction() {
-        const {...oldStore} = calcStore
-        const {firstValue, secondValue, action} = oldStore
-        resetStore()
-        calcStore.firstValue = eval(firstValue + action + secondValue)
+        calcStore.chain = [eval(calcStore.chain.join('')).toString()]
         renderStore()
     }
     function actionPlus() {
@@ -56,24 +51,27 @@ document.addEventListener('DOMContentLoaded', function () {
         renderStore()
     }
     function addAction(action) {
-        calcStore.action =
+        const convertedAction =
             action.includes('×') ? '*' :
             action.includes('÷') ? '/' :
             action
-
+        calcStore.chain = [
+            ...calcStore.chain,
+            convertedAction,
+            '0'
+        ]
         renderStore()
     }
     calcNode.addEventListener('click', ({target}) => {
         if(target.hasAttribute('data-value')) {
             const clickValue = target.getAttribute('data-value') || ''
-            const activeValueKey = calcStore.action === null ? 'firstValue' : 'secondValue'
-            clickValue.match(/\d/) ? changeValue(activeValueKey, clickValue) :
-            clickValue.match(/\./) ? addDot(activeValueKey) :
+            clickValue.match(/\d/) ? changeValue(clickValue) :
+            clickValue.match(/\./) ? addDot() :
             clickValue.includes('AC') ? resetStore() :
-            clickValue.includes('+/-') ? changeSign(activeValueKey) :
-            clickValue.includes('%') ? makePercent(activeValueKey) :
+            clickValue.includes('+/-') ? changeSign() :
+            clickValue.includes('%') ? makePercent() :
             clickValue.includes('=') ? executeAction() :
-            clickValue.includes('+') || clickValue.includes('-')
+            clickValue.includes('+') || clickValue.includes('-') ||
             clickValue.includes('×') || clickValue.includes('÷') ? addAction(clickValue) :
             console.log('false')
         }
